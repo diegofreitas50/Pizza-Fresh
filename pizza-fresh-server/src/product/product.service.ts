@@ -4,20 +4,20 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateTableDto } from './dto/crate-table.dto';
-import { UpdateTableDto } from './dto/update-table.dto';
-import { Table } from './entities/table.entity';
+import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
+import { Product } from './entities/product.entity';
 
 @Injectable()
-export class TableService {
+export class ProductService {
   constructor(private readonly prisma: PrismaService) {}
 
-  findAll(): Promise<Table[]> {
-    return this.prisma.table.findMany();
+  findAll(): Promise<Product[]> {
+    return this.prisma.product.findMany();
   }
 
-  async findById(id: string): Promise<Table> {
-    const record = await this.prisma.table.findUnique({ where: { id } });
+  async findById(id: string): Promise<Product> {
+    const record = await this.prisma.product.findUnique({ where: { id } });
 
     if (!record) {
       throw new NotFoundException(`Registro com id '${id}' não encontrado.`);
@@ -26,22 +26,22 @@ export class TableService {
     return record;
   }
 
-  async findOne(id: string): Promise<Table> {
+  async findOne(id: string): Promise<Product> {
     return this.findById(id);
   }
 
-  create(dto: CreateTableDto): Promise<Table> {
-    const data: Table = { ...dto };
+  create(dto: CreateProductDto): Promise<Product> {
+    const data: Product = { ...dto };
 
-    return this.prisma.table.create({ data }).catch(this.handleError);
+    return this.prisma.product.create({ data }).catch(this.handleError);
   }
 
-  async update(id: string, dto: UpdateTableDto): Promise<Table> {
+  async update(id: string, dto: UpdateProductDto): Promise<Product> {
     await this.findById(id);
 
-    const data: Partial<Table> = { ...dto };
+    const data: Partial<Product> = { ...dto };
 
-    return this.prisma.table
+    return this.prisma.product
       .update({ where: { id }, data })
       .catch(this.handleError);
   }
@@ -49,7 +49,7 @@ export class TableService {
   async delete(id: string) {
     await this.findById(id);
 
-    await this.prisma.table.delete({ where: { id } });
+    await this.prisma.product.delete({ where: { id } });
   }
 
   handleError(error: Error): undefined {
